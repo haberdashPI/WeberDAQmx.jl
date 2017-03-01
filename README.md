@@ -1,7 +1,20 @@
 # WeberDAQmx
 
-[![Build Status](https://travis-ci.org/haberdashPI/WeberDAQmx.jl.svg?branch=master)](https://travis-ci.org/haberdashPI/WeberDAQmx.jl)
+This Julia package extends [Weber](https://github.com/haberdashPI/Weber.jl), to allow triggers to be set during EEG recording using the DAQmx api. It is a simple extension which translates the record codes, during a call to `record`, to digital trigger events. It can be used as follows.
 
-[![Coverage Status](https://coveralls.io/repos/haberdashPI/WeberDAQmx.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/haberdashPI/WeberDAQmx.jl?branch=master)
+```julia
+using Weber
+using 
 
-[![codecov.io](http://codecov.io/github/haberdashPI/WeberDAQmx.jl/coverage.svg?branch=master)](http://codecov.io/github/haberdashPI/WeberDAQmx.jl?branch=master)
+# ... other setup code
+
+exp = Experiment(
+  # other settings...
+  extensions = [daq_extension("/TestDevice/port0/line0:7",
+  	              codes=Dict("trial_start"=>0x01, "stimulus1" => 0x02))]
+)
+
+# expeirment setup continued...
+```
+
+Once extended, each record event (e.g. `moment(record,"stimulus1")`) will also send an event trigger (e.g. `0x02`).
